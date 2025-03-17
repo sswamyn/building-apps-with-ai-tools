@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Barefoot Developer Course: Building Apps with AI Tools</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, title-slide
+
+# Building Simple Web Apps with AI Tools 
+
+### Lucas Soares, Instructor
+### March 20, 2025
+---
+
+
+# Course Agenda
+
+1. **Methodology Notes**
+
+--
+
+2. **What this Course is and What is Not**
+
+--
+
+3. **Motivation**
+
+--
+
+4. **AI Tools**
+
+--
+
+5. **Workflow for Building Apps**
+
+--
+
+6. **Hands-on: Cursor/Claude Walkthrough**
+
+--
+
+7. **Hands-on: Building A Simple Webpage**
+
+--
+
+8. **Notes on Best Practices**
+
+--
+
+9. **Hands-on: Building a Quiz App**  
+
+--
+
+10. **Extending capabilities with APIs**
+
+--
+
+11. **Hands-on: Interactive Live Coding**
+
+---
+
+# Methodology Notes
+
+1. **Presentation**: Theoretical concepts and explanations
+
+--
+
+2. **Demonstration**: Live walkthrough of concepts
+
+--
+
+3. **Recap Summary**: Key takeaways and discussion
+
+--
+
+4. **Interactive Q&A**: Addressing specific questions
+
+--
+
+5. **Break**: Time to process and reflect
+
+---
+
+# What This Course Is and Is Not
+
+## <span style="color: red;">NOT About:</span>
+
+- Building commercial applications
+- Deploying apps for profit
+- Complex software architecture
+
+--
+
+## <span style="color: green">IS About:</span>
+
+- Learning how to be more productive with AI tools
+- LeveragingAI tools effectively to build apps for yourself
+- Using pure HTML/JavaScript for personal apps without hassle
+- Building tools for your own workflow needs
+- Understanding AI-assisted development
+
+---
+
+# Course Overview
+
+This course will empower you to:
+
+- Build functional web applications using AI assistance
+
+--
+
+- Create and refine technical specifications efficiently
+
+--
+
+- Develop effective problem-solving approaches
+
+--
+
+- Deploy personal applications that address local needs
+
+--
+
+_The goal isn't to turn you into a professional developer, but to give you the tools and confidence to create solutions for problems that matter to you._
+
+---
+
+## Target Audience
+
+- Technically curious non-developers
+- Low-code/no-code tool power users
+- Professionals looking to solve specific problems
+- Community builders with specific software needs
+
+--
+
+If you've ever thought, <span class="highlight">"I wish there was an app for that,"</span> this course is for you.
+
+---
+
+# Tools and Resources Needed
+
+To participate fully in this course, you'll need:
+
+- Computer with browser and internet connection
+- Free accounts for Cursor IDE and Claude
+- Optional: GitHub account
+
+--
+
+All the tools we'll use have **free tiers** sufficient for our coursework.
+
+---
+
+class: center, middle, section-title
+
+# Motivation
+
+---
+
+# Why Learn to Build Apps with AI?
+
+- **AI tools lower the barrier to software creation**
+
+--
+
+- Build **personal, local-first applications** that solve real problems
+
+--
+
+- No professional development experience required
+
+--
+
+- Gain **practical skills** for leveraging AI in software development
+
+--
+
+- Move beyond reliance on big tech by creating **your own tools**
+
+---
+
+# Who are Barefoot Developers?
+
+--
+
+- Technically curious but not full-time programmers
+
+--
+
+- Build software for personal & community use
+
+--
+
+- Solve **specific problems** that commercial software ignores
+
+--
+
+## Why this mindset matters
+
+--
+
+- Empowers individuals to take control of their digital tools
+
+--
+
+- Encourages practical experimentation with AI
+
+--
+
+- Bridges the gap between no-code and full software development
+
+
+---
+
+class: center, middle, section-title
+
+# AI Tools
+
+---
+
+# Core Components Overview
+
+Our development stack consists of five key elements:
+
+1. **Large Language Models** (Claude, GPT)
+2. **AI-enhanced IDEs** (Cursor)
+3. **Frontend technologies** (HTML, CSS, JavaScript)
+4. **Storage options** (local-first approach)
+5. **Deployment methods**
+
+--
+
+This combination of tools enables us to build complete applications with minimal technical background.
+
+---
+class: center, middle
+
+<h1>
+<span style="background-color: lightgreen">
+  Hands-on: Claude Walkthrough
+</span>
+</h1>
+
+---
+
+# Claude Recap
+
+- **Multi-Modal Chat**: General-purpose multi-modal communication
+
+- **Context**: 200k+ tokens of context length (~500 pages)
+
+- **Code Generation**: Writes code based on the context
+
+- **Code Review**: Helps refine code
+
+- **Claude Projects**: Work on multiple files at once for complex projects
+
+- **Claude Artifacts**: Run and preview code in the browser
+
+- **Prompting tips**: use role, give context, be clear, specific and direct
+
+- **Meta Prompt**: ask claude to improve your own prompt 
+
+---
+
+class: center, middle
+
+  <h1>
+  <span style="background-color: lightgreen">
+    Hands-on: Cursor Walkthrough
+  </span>
+  </h1>
+
+---
+
+
+# Cursor IDE Recap
+
+- AI-enhanced code editor
+
+--
+
+- Spec document capabilities
+
+--
+
+- Cursorrules mechanism for consistent development
+
+--
+
+- File referencing with @ symbol for context
+
+--
+
+---
+
+
+class: center, middle, section-title
+
+# Workflow for Building Apps
+
+---
+
+# Basic Workflow Cycle
+
+<img src="./2025-03-17-16-26-37.png" width=80%; alt="Visual workflow diagram showing the barefoot developer process" />
+
+Our approach is **iterative and AI-collaborative**,
+focusing on continuous refinement based on user feedback.
+
+---
+class: center, middle
+
+<h1>
+<span style="background-color: lightgreen">
+  Hands-on: Building a Simple Webpage
+</span>
+</h1>
+
+---
+class: center, middle
+
+# Notes Best Practices
+
+---
+# Problem <img src="2025-03-17-16-54-49.png" height="40px" alt="Lamp icon" style="vertical-align: middle; margin-left: 15px;" />
+
+--
+
+## Brainstorm with Claude <img src="./2025-03-17-16-55-22.png" width="40px" alt="Claude logo" style="vertical-align: middle; margin-left: 10px;" />
+
+- Explore problem space
+- Generate initial ideas
+- Refine concepts through dialogue
+
+--
+
+## Research with AI Tools
+
+- <div style="display: flex; align-items: center; margin-bottom: 10px;">
+  <span>Perplexity</span>
+  <img src="./2025-03-17-16-55-38.png" width="30px" alt="Perplexity logo" style="margin-left: 10px;" />
+</div>
+
+- <div style="display: flex; align-items: center; margin-bottom: 10px;">
+  <span>ChatGPT</span>
+  <img src="./2025-03-17-16-55-46.png" width="30px" alt="ChatGPT logo" style="margin-left: 10px;" />
+</div>
+
+- <div style="display: flex; align-items: center;">
+  <span>Gemini</span>
+  <img src="./2025-03-17-16-55-53.png" width="30px" alt="Gemini logo" style="margin-left: 10px;" />
+</div>
+
+---
+
+# App Flow <img src="./2025-03-17-16-55-22.png" width="40px" alt="Flow diagram icon" style="vertical-align: middle; margin-left: 15px;" />
+
+--
+
+## Diagramming Tools
+
+- Use Claude for Diagrams (mermaid) <img src="./2025-03-17-16-55-22.png" width="30px" alt="Claude logo" style="vertical-align: middle; margin-left: 10px;" />
+
+--
+
+- Sketch the raw app flow <img src="./2025-03-17-16-55-22.png" width="30px" alt="Sketch icon" style="vertical-align: middle; margin-left: 10px;" />
+  - Excalidraw
+  - Figma
+  - Other visual tools
+
+---
+
+# Writing Detailed Spec Docs <img src="./2025-03-17-16-56-27.png" width="40px" alt="Document icon" style="vertical-align: middle; margin-left: 15px;" />
+
+--
+
+## Documentation Approaches
+
+- Claude Projects instructions <img src="./2025-03-17-16-55-22.png" width="30px" alt="Claude logo" style="vertical-align: middle; margin-left: 10px;" />
+
+--
+
+- Write detailed context files <img src="./2025-03-17-16-56-27.png" width="30px" alt="Document icon" style="vertical-align: middle; margin-left: 10px;" />
+  - context.md files
+  - .cursorrules files in Cursor
+
+---
+
+# Build
+
+- Prototype with Claude Artifacts And/OR Claude Projects
+
+--
+
+- Build through dialog with Cursor in Agentic Mode <img src="./2025-03-17-16-56-27.png" width="40px" alt="Document icon" style="vertical-align: middle; margin-left: 15px;" />
+
+
+---
+class: center, middle
+
+<h1>
+<span style="background-color: lightgreen">
+  Hands-on: Building a Quiz App
+</span>
+</h1>
+
+---
+
+# Cursor Spec Doc Template
+
+```markdown
+# Quiz Application Specification
+
+## Problem Statement
+Create a simple quiz application that allows users to test their knowledge on various topics with multiple-choice questions.
+
+## Core Features
+1. Present questions with multiple choice answers
+2. Track user score
+3. Show results at the end
+4. Save progress locally
+
+## Technical Requirements
+- HTML/CSS/JavaScript only
+- Mobile-responsive design
+- Local storage for saving progress
+- No external dependencies
+```
+
+---
+
+# CursorRules Files
+
+CursorRules help maintain consistency in AI-generated code:
+
+```markdown
+# CursorRules.md
+
+## Coding Standards
+- Use camelCase for variables and functions
+- Use PascalCase for component names
+- Add JSDoc comments for all functions
+- Follow accessibility best practices
+
+## Project Structure
+- Keep components in separate files
+- Store utility functions in utils.js
+- Use consistent error handling
+```
+
+---
+class: center, middle
+
+<h1>
+<span style="background-color: lightgreen">
+  Hands-on: Putting Everything Together
+</span>
+</h1>
+
+---
+
+class: center, middle, section-title
+
+# Complementary Tools & Resources
+
+---
+
+# No-Code/Low-Code AI Tools
+
+- **Vercel V0**
+  - Text-to-interface generation
+  - React component creation
+  - Integrated with Next.js
+
+- **Replit**
+  - Collaborative coding environment
+  - Built-in hosting
+  - AI coding assistant (Ghostwriter)
+
+- **Replicate**
+  - Model deployment
+  - API access to various AI models
+  - Custom model hosting
+
+- **Together.ai**
+  - AI orchestration
+  - Model fine-tuning
+  - Enterprise-grade infrastructure
+
+---
+  
+# Connect With Me
+
+.center[
+
+## 🔗 [LinkedIn](https://www.linkedin.com/in/lucas-soares-969044167/)
+## 🐦 [Twitter/X](https://x.com/LucasEnkrateia)
+## 📺 [YouTube](https://www.youtube.com/@automatalearninglab)
+## Email: lucasenkrateia@gmail.com
+
+Course materials: 
+]
+
+---
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
+

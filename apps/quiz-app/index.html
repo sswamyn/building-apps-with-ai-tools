@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Quiz App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Quiz App</h1>
+        </header>
+        
+        <main>
+            <!-- Home Page -->
+            <section id="home-page" class="page active">
+                <div class="card">
+                    <h2>Quiz App</h2>
+                    <div class="button-group">
+                        <label for="quiz-file" class="button primary">
+                            Import Quiz File
+                            <input type="file" id="quiz-file" accept=".json" hidden>
+                        </label>
+                        <button id="start-quiz" class="button success" disabled>Start Quiz</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Multiple Choice Question Page -->
+            <section id="multiple-choice-page" class="page">
+                <div class="card">
+                    <h3 id="mc-question-text">Question description</h3>
+                    <div class="options-grid">
+                        <button class="option" data-index="0">Option A</button>
+                        <button class="option" data-index="1">Option B</button>
+                        <button class="option" data-index="2">Option C</button>
+                        <button class="option" data-index="3">Option D</button>
+                    </div>
+                    <div class="button-group">
+                        <button id="mc-submit" class="button success">Submit</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Open-ended Question Page -->
+            <section id="open-ended-page" class="page">
+                <div class="card">
+                    <h3 id="oe-question-text">Question description</h3>
+                    <textarea id="user-answer" placeholder="Your answer here..."></textarea>
+                    <div class="button-group">
+                        <button id="oe-submit" class="button success">Submit</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feedback Page -->
+            <section id="feedback-page" class="page">
+                <div class="card">
+                    <h3 id="feedback-question-text">Question description</h3>
+                    <div class="feedback-container">
+                        <div class="feedback-item">
+                            <p>User Answer:</p>
+                            <div id="user-answer-display" class="answer-box"></div>
+                        </div>
+                        <div class="feedback-item">
+                            <p>Correct Answer:</p>
+                            <div id="correct-answer-display" class="answer-box"></div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button id="next-question" class="button primary">Next</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Multiple Choice Feedback Page -->
+            <section id="mc-feedback-page" class="page">
+                <div class="card">
+                    <h3 id="mc-feedback-question-text">Question description</h3>
+                    <div class="options-grid feedback-grid">
+                        <div class="option" id="option-0">Option A</div>
+                        <div class="option" id="option-1">Option B</div>
+                        <div class="option" id="option-2">Option C</div>
+                        <div class="option" id="option-3">Option D</div>
+                    </div>
+                    <div class="button-group">
+                        <button id="mc-next-question" class="button primary">Next</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Page -->
+            <section id="results-page" class="page">
+                <div class="card">
+                    <h2>Quiz Results</h2>
+                    <div class="score-container">
+                        <p>Score: <span id="score">0</span>/<span id="total-questions">0</span></p>
+                        <div id="score-percentage"></div>
+                    </div>
+                    
+                    <div class="results-list">
+                        <!-- Results will be dynamically added here -->
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="download-csv" class="button primary">Download CSV</button>
+                        <button id="export-anki" class="button primary">Export to Anki</button>
+                        <button id="import-another" class="button primary">Import Another File</button>
+                        <button id="go-again" class="button success">Go Again</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360">
+  <!-- Background -->
+  <rect width="800" height="360" fill="white" />
+  
+  <!-- Title -->
+  <text x="400" y="35" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle">The Rapid Evolution of AI Coding Tools</text>
+  
+  <!-- Timeline line -->
+  <line x1="100" y1="180" x2="700" y2="180" stroke="#222" stroke-width="2" />
+  
+  <!-- Timeline dots -->
+  <circle cx="100" cy="180" r="6" fill="#222" />
+  <circle cx="250" cy="180" r="6" fill="#222" />
+  <circle cx="400" cy="180" r="6" fill="#222" />
+  <circle cx="550" cy="180" r="6" fill="#222" />
+  <circle cx="700" cy="180" r="6" fill="#222" />
+  
+  <!-- Timeline years -->
+  <text x="100" y="205" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle">2020-21</text>
+  <text x="250" y="205" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle">2022</text>
+  <text x="400" y="205" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle">2023</text>
+  <text x="550" y="205" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle">2024</text>
+  <text x="700" y="205" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle">2025</text>
+  
+  <!-- Timeline content - compact text labels above the line -->
+  <!-- 2020-2021 -->
+  <text x="100" y="135" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Basic code</text>
+  <text x="100" y="150" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">completion tools</text>
+  <line x1="100" y1="155" x2="100" y2="174" stroke="#222" stroke-width="1" />
+  
+  <!-- 2022 -->
+  <text x="250" y="120" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Advanced code suggestions</text>
+  <text x="250" y="135" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">and GitHub Copilot</text>
+  <line x1="250" y1="140" x2="250" y2="174" stroke="#222" stroke-width="1" />
+  
+  <!-- 2023 -->
+  <text x="400" y="135" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Explosion of AI coding</text>
+  <text x="400" y="150" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">assistance tools</text>
+  <line x1="400" y1="155" x2="400" y2="174" stroke="#222" stroke-width="1" />
+  
+  <!-- 2024 -->
+  <text x="550" y="120" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Natural language</text>
+  <text x="550" y="135" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">programming interfaces</text>
+  <line x1="550" y1="140" x2="550" y2="174" stroke="#222" stroke-width="1" />
+  
+  <!-- 2025 -->
+  <text x="700" y="120" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">Tool orchestration through</text>
+  <text x="700" y="135" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">conversational interfaces</text>
+  <line x1="700" y1="140" x2="700" y2="174" stroke="#222" stroke-width="1" />
+  
+  <!-- Bottom caption -->
+  <text x="400" y="250" font-family="Arial, sans-serif" font-size="14" font-style="italic" text-anchor="middle">We're witnessing a fundamental shift in how software</text>
+  <text x="400" y="270" font-family="Arial, sans-serif" font-size="14" font-style="italic" text-anchor="middle">gets created and who can create it.</text>
+  
+  <!-- Progress indicator - minimalist arrow -->
+  <path d="M90,180 L720,180 L720,170 L740,182 L720,194, L720,184 L90,184 Z" fill="#222" />
+</svg>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abstract Expressionist Canvas</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #111;
+      font-family: Arial, sans-serif;
+    }
+    
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #e8e0d0; /* Pollock's canvas color */
+      cursor: crosshair;
+    }
+    
+    .controls {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 10;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      max-width: 300px;
+    }
+    
+    .color {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.2s;
+    }
+    
+    .color:hover {
+      transform: scale(1.2);
+    }
+    
+    .color.active {
+      border-color: white;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 5px;
+      margin-top: 10px;
+      width: 100%;
+    }
+    
+    button {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    button:hover {
+      background: #555;
+    }
+    
+    button.active {
+      background: #b3432b;
+    }
+    
+    .message {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      opacity: 0;
+      transition: opacity 0.5s;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  
+  <div class="controls">
+    <div class="color" style="background: #000" data-color="#000000"></div>
+    <div class="color" style="background: #b3432b" data-color="#b3432b"></div>
+    <div class="color" style="background: #c7b299" data-color="#c7b299"></div>
+    <div class="color" style="background: #f7dc6f" data-color="#f7dc6f"></div>
+    <div class="color" style="background: #4a4a4a" data-color="#4a4a4a"></div>
+    <div class="color" style="background: #d4d4d4" data-color="#d4d4d4"></div>
+    <div class="color" style="background: #3498db" data-color="#3498db"></div>
+    <div class="color" style="background: #2ecc71" data-color="#2ecc71"></div>
+    <div class="color" style="background: #9b59b6" data-color="#9b59b6"></div>
+    <div class="color" style="background: #e74c3c" data-color="#e74c3c"></div>
+    <div class="color" style="background: #1abc9c" data-color="#1abc9c"></div>
+    <div class="color" style="background: #e67e22" data-color="#e67e22"></div>
+    
+    <div class="buttons">
+      <button id="btn-drip" class="active">Drip</button>
+      <button id="btn-splash">Splash</button>
+      <button id="btn-chaos">Chaos!</button>
+      <button id="btn-clear">Clear</button>
+      <button id="btn-save">Save</button>
+    </div>
+  </div>
+  
+  <div id="message" class="message"></div>
+  
+  <script>
+    // Core elements
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const message = document.getElementById('message');
+    
+    // Set canvas size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Variables
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let currentColor = '#000000';
+    let currentTool = 'drip';
+    let drips = [];
+    let hue = 0;
+    let chaosMode = false;
+    let chaosAnimationId = null;
+    
+    // Make first color active by default
+    document.querySelector('.color').classList.add('active');
+    
+    // Add some random paint specks to the background
+    function createBackground() {
+      // Base canvas color
+      ctx.fillStyle = '#e8e0d0';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Add texture
+      for (let i = 0; i < 5000; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = Math.random() * 2;
+        ctx.fillStyle = `rgba(0, 0, 0, ${Math.random() * 0.03})`;
+        ctx.fillRect(x, y, size, size);
+      }
+      
+      // Add a few initial marks
+      for (let i = 0; i < 10; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        
+        if (Math.random() > 0.5) {
+          // Line
+          ctx.strokeStyle = `rgba(0, 0, 0, ${Math.random() * 0.1 + 0.05})`;
+          ctx.lineWidth = Math.random() * 2 + 1;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(
+            x + (Math.random() - 0.5) * 200, 
+            y + (Math.random() - 0.5) * 200
+          );
+          ctx.stroke();
+        } else {
+          // Spot
+          ctx.fillStyle = `rgba(0, 0, 0, ${Math.random() * 0.1 + 0.05})`;
+          ctx.beginPath();
+          ctx.arc(x, y, Math.random() * 10 + 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+    
+    // Show a message
+    function showMessage(text) {
+      message.textContent = text;
+      message.style.opacity = 1;
+      
+      setTimeout(() => {
+        message.style.opacity = 0;
+      }, 2000);
+    }
+    
+    // Start drawing
+    function startDraw(e) {
+      isDrawing = true;
+      
+      // Get proper coordinates whether mouse or touch
+      let x, y;
+      if (e.type.includes('mouse')) {
+        x = e.offsetX;
+        y = e.offsetY;
+      } else {
+        const rect = canvas.getBoundingClientRect();
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+      }
+      
+      [lastX, lastY] = [x, y];
+    }
+    
+    // Draw function
+    function draw(e) {
+      if (!isDrawing) return;
+      
+      // Get proper coordinates
+      let x, y;
+      if (e.type.includes('mouse')) {
+        x = e.offsetX;
+        y = e.offsetY;
+      } else {
+        const rect = canvas.getBoundingClientRect();
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+        
+        // Prevent scrolling while drawing
+        e.preventDefault();
+      }
+      
+      // Calculate speed for dynamic line width
+      const dx = x - lastX;
+      const dy = y - lastY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const speed = Math.min(distance, 20); // Cap for stability
+      
+      if (currentTool === 'drip') {
+        // Main line
+        ctx.beginPath();
+        ctx.lineWidth = Math.max(speed / 2, 1);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = currentColor;
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        
+        // Create drips
+        if (speed > 5 && Math.random() > 0.7) {
+          drips.push({
+            x,
+            y,
+            width: Math.random() * 3 + 1,
+            height: 0,
+            maxHeight: Math.random() * 100 + 50,
+            color: currentColor,
+            active: true
+          });
+        }
+      } else if (currentTool === 'splash') {
+        // Splash/splatter effect
+        const splatterAmount = Math.ceil(speed / 3);
+        
+        for (let i = 0; i < splatterAmount; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const splatterDistance = Math.random() * speed * 2;
+          const splatterX = x + Math.cos(angle) * splatterDistance;
+          const splatterY = y + Math.sin(angle) * splatterDistance;
+          
+          const size = Math.random() * (speed/5) + 1;
+          
+          ctx.fillStyle = currentColor;
+          ctx.beginPath();
+          ctx.arc(splatterX, splatterY, size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        // Draw a connecting line for smoother effect
+        ctx.beginPath();
+        ctx.lineWidth = Math.max(speed / 4, 0.5);
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = currentColor;
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+      
+      [lastX, lastY] = [x, y];
+    }
+    
+    // Stop drawing
+    function stopDraw() {
+      isDrawing = false;
+    }
+    
+    // Update active drips
+    function updateDrips() {
+      let anyActive = false;
+      
+      drips.forEach(drip => {
+        if (drip.active) {
+          anyActive = true;
+          
+          // Grow the drip
+          drip.height += 1;
+          
+          // Add some natural variation
+          drip.x += (Math.random() - 0.5) * 1;
+          
+          // Draw the drip
+          ctx.fillStyle = drip.color;
+          ctx.fillRect(
+            drip.x - drip.width/2, 
+            drip.y + drip.height - 1,
+            drip.width, 
+            1
+          );
+          
+          // Occasionally add a small blob
+          if (Math.random() > 0.97) {
+            const blobSize = Math.random() * drip.width * 2;
+            ctx.beginPath();
+            ctx.arc(
+              drip.x + (Math.random() - 0.5) * drip.width, 
+              drip.y + drip.height,
+              blobSize, 
+              0, 
+              Math.PI * 2
+            );
+            ctx.fill();
+          }
+          
+          // Check if drip is done
+          if (drip.height >= drip.maxHeight) {
+            drip.active = false;
+          }
+        }
+      });
+      
+      // Continue animation if there are active drips
+      if (anyActive) {
+        requestAnimationFrame(updateDrips);
+      }
+    }
+    
+    // Event listeners
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('mouseout', stopDraw);
+    
+    // Touch events
+    canvas.addEventListener('touchstart', startDraw);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDraw);
+    
+    // Window resize
+    window.addEventListener('resize', () => {
+      // Save current canvas
+      const dataURL = canvas.toDataURL();
+      const img = new Image();
+      
+      img.onload = () => {
+        // Resize canvas
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Redraw
+        ctx.drawImage(img, 0, 0);
+      };
+      
+      img.src = dataURL;
+    });
+    
+    // Color selection
+    document.querySelectorAll('.color').forEach(colorEl => {
+      colorEl.addEventListener('click', () => {
+        // Update active class
+        document.querySelectorAll('.color').forEach(el => {
+          el.classList.remove('active');
+        });
+        colorEl.classList.add('active');
+        
+        // Set current color
+        currentColor = colorEl.dataset.color;
+        showMessage(`Color: ${currentColor}`);
+      });
+    });
+    
+    // Button handlers
+    document.getElementById('btn-drip').addEventListener('click', () => {
+      currentTool = 'drip';
+      document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-drip').classList.add('active');
+      showMessage('Tool: Drip');
+    });
+    
+    document.getElementById('btn-splash').addEventListener('click', () => {
+      currentTool = 'splash';
+      document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-splash').classList.add('active');
+      showMessage('Tool: Splash');
+    });
+    
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      createBackground();
+      drips = [];
+      showMessage('Canvas cleared');
+    });
+    
+    document.getElementById('btn-save').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'abstract-expressionist-artwork.png';
+      link.href = canvas.toDataURL();
+      link.click();
+      showMessage('Artwork saved');
+    });
+    
+    // Chaos button handler
+    document.getElementById('btn-chaos').addEventListener('click', () => {
+      if (chaosMode) {
+        // Turn off chaos mode
+        chaosMode = false;
+        if (chaosAnimationId) {
+          cancelAnimationFrame(chaosAnimationId);
+          chaosAnimationId = null;
+        }
+        showMessage('Chaos mode deactivated');
+      } else {
+        // Turn on chaos mode
+        chaosMode = true;
+        showMessage('✨ CHAOS MODE ACTIVATED ✨');
+        
+        // Save current canvas state
+        const dataURL = canvas.toDataURL();
+        const originalCanvas = new Image();
+        
+        originalCanvas.onload = () => {
+          // Start chaos animation
+          let frame = 0;
+          let particles = [];
+          
+          // Create initial particles
+          for (let i = 0; i < 100; i++) {
+            particles.push({
+              x: Math.random() * canvas.width,
+              y: Math.random() * canvas.height,
+              size: Math.random() * 20 + 5,
+              speedX: (Math.random() - 0.5) * 10,
+              speedY: (Math.random() - 0.5) * 10,
+              color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+              rotation: Math.random() * Math.PI * 2,
+              rotationSpeed: (Math.random() - 0.5) * 0.2
+            });
+          }
+          
+          function chaosAnimation() {
+            if (!chaosMode) return;
+            
+            frame++;
+            
+            // Clear canvas with semi-transparent overlay for trail effect
+            ctx.fillStyle = 'rgba(232, 224, 208, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw original canvas with distortion
+            const distortionAmount = Math.sin(frame / 20) * 10;
+            ctx.drawImage(
+              originalCanvas, 
+              Math.sin(frame / 30) * distortionAmount, 
+              Math.cos(frame / 25) * distortionAmount
+            );
+            
+            // Apply occasional color shift
+            if (frame % 30 === 0) {
+              ctx.fillStyle = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.05)`;
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // Update and draw particles
+            particles.forEach((p, index) => {
+              // Update position
+              p.x += p.speedX;
+              p.y += p.speedY;
+              p.rotation += p.rotationSpeed;
+              
+              // Bounce off edges
+              if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+              if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+              
+              // Draw particle
+              ctx.save();
+              ctx.translate(p.x, p.y);
+              ctx.rotate(p.rotation);
+              
+              // Alternate between shapes
+              if (index % 3 === 0) {
+                // Circle
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(0, 0, p.size * (0.7 + Math.sin(frame / 10) * 0.3), 0, Math.PI * 2);
+                ctx.fill();
+              } else if (index % 3 === 1) {
+                // Star
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                  const angle = (i * Math.PI * 2) / 5 - Math.PI / 2;
+                  const outerRadius = p.size;
+                  const innerRadius = p.size / 2;
+                  
+                  if (i === 0) {
+                    ctx.moveTo(Math.cos(angle) * outerRadius, Math.sin(angle) * outerRadius);
+                  } else {
+                    ctx.lineTo(Math.cos(angle) * outerRadius, Math.sin(angle) * outerRadius);
+                  }
+                  
+                  const innerAngle = angle + Math.PI / 5;
+                  ctx.lineTo(Math.cos(innerAngle) * innerRadius, Math.sin(innerAngle) * innerRadius);
+                }
+                ctx.closePath();
+                ctx.fill();
+              } else {
+                // Square
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+              }
+              
+              ctx.restore();
+              
+              // Occasionally change color
+              if (Math.random() > 0.98) {
+                p.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+              }
+            });
+            
+            // Add new particles occasionally
+            if (frame % 15 === 0 && particles.length < 200) {
+              particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 20 + 5,
+                speedX: (Math.random() - 0.5) * 10,
+                speedY: (Math.random() - 0.5) * 10,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                rotation: Math.random() * Math.PI * 2,
+                rotationSpeed: (Math.random() - 0.5) * 0.2
+              });
+            }
+            
+            // Create occasional explosive burst
+            if (frame % 60 === 0) {
+              const burstX = Math.random() * canvas.width;
+              const burstY = Math.random() * canvas.height;
+              const burstColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+              
+              for (let i = 0; i < 20; i++) {
+                const angle = (i / 20) * Math.PI * 2;
+                const distance = Math.random() * 100 + 50;
+                
+                ctx.strokeStyle = burstColor;
+                ctx.lineWidth = Math.random() * 3 + 1;
+                ctx.beginPath();
+                ctx.moveTo(burstX, burstY);
+                ctx.lineTo(
+                  burstX + Math.cos(angle) * distance,
+                  burstY + Math.sin(angle) * distance
+                );
+                ctx.stroke();
+              }
+            }
+            
+            // Continue animation
+            chaosAnimationId = requestAnimationFrame(chaosAnimation);
+          }
+          
+          // Start chaos animation
+          chaosAnimationId = requestAnimationFrame(chaosAnimation);
+        };
+        
+        originalCanvas.src = dataURL;
+      }
+    });
+    
+    // Initialize
+    createBackground();
+    showMessage('Start painting');
+    
+    // Add a cool effect on load
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      
+      // Random starter splatter
+      if (Math.random() > 0.5) {
+        const color = ['#000000', '#b3432b'][Math.floor(Math.random() * 2)];
+        const count = Math.floor(Math.random() * 10) + 5;
+        
+        for (let j = 0; j < count; j++) {
+          const angle = Math.random() * Math.PI * 2;
+          const distance = Math.random() * 30 + 5;
+          const splatterX = x + Math.cos(angle) * distance;
+          const splatterY = y + Math.sin(angle) * distance;
+          
+          const size = Math.random() * 3 + 1;
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(splatterX, splatterY, size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+    
+    // Animate drips
+    function animate() {
+      updateDrips();
+    }
+    
+    // Start animation
+    animate();
+  </script>
+</body>
+</html>

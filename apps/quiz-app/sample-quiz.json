@@ -1,0 +1,41 @@
+[
+  {
+    "type": "multiple-choice",
+    "question": "What is the capital of France?",
+    "options": ["London", "Berlin", "Paris", "Madrid"],
+    "correctAnswer": 2
+  },
+  {
+    "type": "multiple-choice",
+    "question": "Which planet is known as the Red Planet?",
+    "options": ["Venus", "Mars", "Jupiter", "Saturn"],
+    "correctAnswer": 1
+  },
+  {
+    "type": "open-ended",
+    "question": "What is the largest ocean on Earth?",
+    "acceptedAnswers": ["Pacific", "Pacific Ocean", "The Pacific", "The Pacific Ocean"]
+  },
+  {
+    "type": "multiple-choice",
+    "question": "Who painted the Mona Lisa?",
+    "options": ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Michelangelo"],
+    "correctAnswer": 2
+  },
+  {
+    "type": "open-ended",
+    "question": "What is the chemical symbol for gold?",
+    "acceptedAnswers": ["Au"]
+  },
+  {
+    "type": "multiple-choice",
+    "question": "Which of these is NOT a programming language?",
+    "options": ["Java", "Python", "Banana", "JavaScript"],
+    "correctAnswer": 2
+  },
+  {
+    "type": "open-ended",
+    "question": "What year did World War II end?",
+    "acceptedAnswers": ["1945"]
+  }
+] 

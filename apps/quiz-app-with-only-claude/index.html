@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Quiz App</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        /* Upload Section */
+        .upload-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        
+        .file-input-container {
+            position: relative;
+            margin: 20px auto;
+            width: 200px;
+        }
+        
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .file-input-label:hover {
+            background-color: #2980b9;
+        }
+        
+        .selected-file {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        /* Button Styles */
+        button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        
+        button:hover {
+            background-color: #27ae60;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        /* Quiz Container */
+        .quiz-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .question-number {
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        /* Multiple Choice Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 15px;
+            background-color: #f1f2f6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #e8e8e8;
+        }
+        
+        .option.selected {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        /* Open-ended Question */
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #dcdde1;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+        
+        .answer-input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        /* Results Container */
+        .results-container {
+            display: none;
+        }
+        
+        .score-display {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .score-value {
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .feedback-list {
+            margin-bottom: 30px;
+        }
+        
+        .feedback-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        
+        .feedback-item.correct {
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .feedback-item.incorrect {
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .feedback-question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .feedback-answer {
+            margin-bottom: 5px;
+        }
+        
+        .feedback-correct {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        
+        .feedback-incorrect {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        /* Export Section */
+        .export-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .export-csv {
+            background-color: #3498db;
+        }
+        
+        .export-anki {
+            background-color: #9b59b6;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .export-section {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Modern Quiz App</h1>
+        
+        <!-- Upload Section -->
+        <div class="upload-section" id="uploadSection">
+            <h2>Upload Your Quiz</h2>
+            <p>Select a JSON file with quiz questions</p>
+            
+            <div class="file-input-container">
+                <input type="file" id="fileInput" class="file-input" accept=".json">
+                <label for="fileInput" class="file-input-label">Choose File</label>
+            </div>
+            
+            <div class="selected-file" id="selectedFile">No file selected</div>
+            
+            <button id="startQuizBtn" disabled>Start Quiz</button>
+        </div>
+        
+        <!-- Quiz Container -->
+        <div class="quiz-container" id="quizContainer">
+            <div class="question-header">
+                <div class="question-number" id="questionNumber">Question 1 of 10</div>
+            </div>
+            
+            <div class="question-text" id="questionText"></div>
+            
+            <!-- Multiple Choice Options (shown for multiple-choice) -->
+            <div class="options-grid" id="optionsGrid"></div>
+            
+            <!-- Open-ended Input (shown for open-ended) -->
+            <textarea id="answerInput" class="answer-input" placeholder="Enter your answer here" rows="4"></textarea>
+            
+            <button id="submitAnswerBtn">Submit Answer</button>
+        </div>
+        
+        <!-- Results Container -->
+        <div class="results-container" id="resultsContainer">
+            <h2>Quiz Results</h2>
+            
+            <div class="score-display">
+                Your score: <span class="score-value" id="scoreValue">0/0</span>
+            </div>
+            
+            <div class="feedback-list" id="feedbackList"></div>
+            
+            <div class="export-section">
+                <button class="export-csv" id="exportCsvBtn">Export as CSV</button>
+                <button class="export-anki" id="exportAnkiBtn">Export for Anki</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let quizData = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let score = 0;
+        
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const selectedFile = document.getElementById('selectedFile');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const uploadSection = document.getElementById('uploadSection');
+        const quizContainer = document.getElementById('quizContainer');
+        const questionNumber = document.getElementById('questionNumber');
+        const questionText = document.getElementById('questionText');
+        const optionsGrid = document.getElementById('optionsGrid');
+        const answerInput = document.getElementById('answerInput');
+        const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const scoreValue = document.getElementById('scoreValue');
+        const feedbackList = document.getElementById('feedbackList');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        const exportAnkiBtn = document.getElementById('exportAnkiBtn');
+        
+        // Event Listeners
+        fileInput.addEventListener('change', handleFileSelect);
+        startQuizBtn.addEventListener('click', startQuiz);
+        submitAnswerBtn.addEventListener('click', submitAnswer);
+        exportCsvBtn.addEventListener('click', exportAsCsv);
+        exportAnkiBtn.addEventListener('click', exportForAnki);
+        
+        // File Handling Functions
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            
+            if (file) {
+                selectedFile.textContent = file.name;
+                
+                // Read file contents
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        // Validate quiz data
+                        if (isValidQuizData(data)) {
+                            quizData = data;
+                            startQuizBtn.disabled = false;
+                        } else {
+                            alert('Invalid quiz data format. Please check your JSON file.');
+                            selectedFile.textContent = 'No file selected';
+                            startQuizBtn.disabled = true;
+                        }
+                    } catch (error) {
+                        alert('Error parsing JSON file: ' + error.message);
+                        selectedFile.textContent = 'No file selected';
+                        startQuizBtn.disabled = true;
+                    }
+                };
+                
+                reader.readAsText(file);
+            } else {
+                selectedFile.textContent = 'No file selected';
+                startQuizBtn.disabled = true;
+            }
+        }
+        
+        function isValidQuizData(data) {
+            if (!Array.isArray(data) || data.length === 0) {
+                return false;
+            }
+            
+            // Check each question
+            return data.every(question => {
+                if (question.type === 'multiple-choice') {
+                    return (
+                        typeof question.question === 'string' &&
+                        Array.isArray(question.options) &&
+                        question.options.length > 0 &&
+                        typeof question.correctAnswer === 'number' &&
+                        question.correctAnswer >= 0 &&
+                        question.correctAnswer < question.options.length
+                    );
+                } else if (question.type === 'open-ended') {
+                    return (
+                        typeof question.question === 'string' &&
+                        Array.isArray(question.acceptedAnswers) &&
+                        question.acceptedAnswers.length > 0
+                    );
+                }
+                
+                return false;
+            });
+        }
+        
+        // Quiz Management Functions
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = Array(quizData.length).fill(null);
+            score = 0;
+            
+            uploadSection.style.display = 'none';
+            quizContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            
+            displayCurrentQuestion();
+        }
+        
+        function displayCurrentQuestion() {
+            const question = quizData[currentQuestionIndex];
+            
+            // Update question number
+            questionNumber.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+            
+            // Update question text
+            questionText.textContent = question.question;
+            
+            // Clear previous options/input
+            optionsGrid.innerHTML = '';
+            answerInput.value = '';
+            
+            // Display question based on type
+            if (question.type === 'multiple-choice') {
+                optionsGrid.style.display = 'grid';
+                answerInput.style.display = 'none';
+                
+                // Generate options
+                question.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option';
+                    optionElement.textContent = option;
+                    optionElement.dataset.index = index;
+                    
+                    optionElement.addEventListener('click', selectOption);
+                    
+                    optionsGrid.appendChild(optionElement);
+                });
+            } else if (question.type === 'open-ended') {
+                optionsGrid.style.display = 'none';
+                answerInput.style.display = 'block';
+                answerInput.focus();
+            }
+        }
+        
+        function selectOption(event) {
+            // Remove selection from all options
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selection to clicked option
+            event.target.classList.add('selected');
+        }
+        
+        function submitAnswer() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            // Get user's answer
+            let userAnswer;
+            let isValid = false;
+            
+            if (currentQuestion.type === 'multiple-choice') {
+                const selectedOption = document.querySelector('.option.selected');
+                
+                if (selectedOption) {
+                    userAnswer = parseInt(selectedOption.dataset.index);
+                    isValid = true;
+                } else {
+                    alert('Please select an option.');
+                }
+            } else if (currentQuestion.type === 'open-ended') {
+                userAnswer = answerInput.value.trim();
+                
+                if (userAnswer) {
+                    isValid = true;
+                } else {
+                    alert('Please enter your answer.');
+                }
+            }
+            
+            // Proceed if valid answer
+            if (isValid) {
+                // Save user's answer
+                userAnswers[currentQuestionIndex] = userAnswer;
+                
+                // Check if correct
+                const isCorrect = checkAnswer(currentQuestion, userAnswer);
+                if (isCorrect) score++;
+                
+                // Move to next question or show results
+                currentQuestionIndex++;
+                
+                if (currentQuestionIndex < quizData.length) {
+                    displayCurrentQuestion();
+                } else {
+                    showResults();
+                }
+            }
+        }
+        
+        function checkAnswer(question, userAnswer) {
+            if (question.type === 'multiple-choice') {
+                return userAnswer === question.correctAnswer;
+            } else if (question.type === 'open-ended') {
+                return question.acceptedAnswers.some(answer => 
+                    userAnswer.toLowerCase() === answer.toLowerCase()
+                );
+            }
+            
+            return false;
+        }
+        
+        // Results Functions
+        function showResults() {
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            // Display score
+            scoreValue.textContent = `${score}/${quizData.length}`;
+            
+            // Clear feedback list
+            feedbackList.innerHTML = '';
+            
+            // Generate feedback for each question
+            quizData.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = checkAnswer(question, userAnswer);
+                
+                const feedbackItem = document.createElement('div');
+                feedbackItem.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                
+                const feedbackQuestion = document.createElement('div');
+                feedbackQuestion.className = 'feedback-question';
+                feedbackQuestion.textContent = `${index + 1}. ${question.question}`;
+                
+                const feedbackYourAnswer = document.createElement('div');
+                feedbackYourAnswer.className = 'feedback-answer';
+                
+                // Display user answer based on question type
+                if (question.type === 'multiple-choice') {
+                    feedbackYourAnswer.textContent = `Your answer: ${question.options[userAnswer]}`;
+                } else {
+                    feedbackYourAnswer.textContent = `Your answer: ${userAnswer}`;
+                }
+                
+                const feedbackCorrectAnswer = document.createElement('div');
+                feedbackCorrectAnswer.className = isCorrect ? 'feedback-correct' : 'feedback-incorrect';
+                
+                // Display correct answer based on question type
+                if (question.type === 'multiple-choice') {
+                    feedbackCorrectAnswer.textContent = `Correct answer: ${question.options[question.correctAnswer]}`;
+                } else {
+                    feedbackCorrectAnswer.textContent = `Correct answer: ${question.acceptedAnswers[0]}`;
+                }
+                
+                feedbackItem.appendChild(feedbackQuestion);
+                feedbackItem.appendChild(feedbackYourAnswer);
+                feedbackItem.appendChild(feedbackCorrectAnswer);
+                
+                feedbackList.appendChild(feedbackItem);
+            });
+        }
+        
+        // Export Functions
+        function exportAsCsv() {
+            let csvContent = 'Question,Your Answer,Correct Answer,Result\n';
+            
+            quizData.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = checkAnswer(question, userAnswer);
+                
+                let userAnswerText = '';
+                let correctAnswerText = '';
+                
+                if (question.type === 'multiple-choice') {
+                    userAnswerText = question.options[userAnswer] || '';
+                    correctAnswerText = question.options[question.correctAnswer];
+                } else {
+                    userAnswerText = userAnswer;
+                    correctAnswerText = question.acceptedAnswers[0];
+                }
+                
+                // Escape commas in text fields
+                const escapedQuestion = `"${question.question.replace(/"/g, '""')}"`;
+                const escapedUserAnswer = `"${userAnswerText.replace(/"/g, '""')}"`;
+                const escapedCorrectAnswer = `"${correctAnswerText.replace(/"/g, '""')}"`;
+                
+                csvContent += `${escapedQuestion},${escapedUserAnswer},${escapedCorrectAnswer},${isCorrect ? 'Correct' : 'Incorrect'}\n`;
+            });
+            
+            downloadFile(csvContent, 'quiz-results.csv', 'text/csv');
+        }
+        
+        function exportForAnki() {
+            let ankiContent = '';
+            
+            quizData.forEach((question) => {
+                let correctAnswer = '';
+                
+                if (question.type === 'multiple-choice') {
+                    correctAnswer = question.options[question.correctAnswer];
+                } else {
+                    correctAnswer = question.acceptedAnswers[0];
+                }
+                
+                // Escape semicolons
+                const escapedQuestion = question.question.replace(/;/g, ',');
+                const escapedAnswer = correctAnswer.replace(/;/g, ',');
+                
+                ankiContent += `${escapedQuestion};${escapedAnswer}\n`;
+            });
+            
+            downloadFile(ankiContent, 'quiz-anki.txt', 'text/plain');
+        }
+        
+        function downloadFile(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            
+            const downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = fileName;
+            downloadLink.click();
+            
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100);
+        }
+    </script>
+</body>
+</html>
