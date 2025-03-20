@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome to our landing page!</h1>
+    <form id="contact-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br><br>
+        <button>Submit</button>
+    </form>
+
+    <div class="section">
+        <h2>Get in touch!</h2>
+        <p>Fill out the form below and we'll get back to you.</p>
+        <input type="text" id="phone-number" name="phone-number" placeholder="Phone Number"><br><br>
+        <button id="call-button">Call me</button>
+
+        <script>
+            // Add an event listener to the call button
+            document.getElementById("call-button").addEventListener("click", function() {
+                // Create a confirmation dialog box
+                var confirmMsg = "Are you sure you want to call us?";
+                var confirmBtn = document.createElement('button');
+                confirmBtn.textContent = 'OK';
+                var closeBtn = document.createElement('button');
+                closeBtn.textContent = 'Cancel';
+                
+                var confirmDiv = document.createElement('div');
+                confirmDiv.appendChild(confirmBtn);
+                confirmDiv.appendChild(closeBtn);
+
+                // Add the confirmation dialog box to the page
+                document.body.appendChild(confirmDiv);
+
+                // Set styles for the confirmation dialog box
+                confirmDiv.style.position = "fixed";
+                confirmDiv.style.top = "50%";
+                confirmDiv.style.left = "50%";
+                confirmDiv.style.transform = "translate(-50%, -50%)";
+
+                // Add an event listener to the OK button
+                confirmBtn.addEventListener("click", function() {
+                    // Remove the confirmation dialog box from the page
+                    document.body.removeChild(confirmDiv);
+                    // Call the phone number using the window.open() method
+                    window.open(`tel:${document.getElementById("phone-number").value}`);
+                });
+
+                // Add an event listener to the Cancel button
+                closeBtn.addEventListener("click", function() {
+                    // Remove the confirmation dialog box from the page
+                    document.body.removeChild(confirmDiv);
+                });
+            });
+        </script>
+    </div>
+
+    <form id="quiz-form">
+        <h2>Take our quiz!</h2>
+        <p>Choose your favorite color:</p>
+        <input type="radio" id="red" name="color" value="red"><label for="red">Red</label><br><br>
+        <input type="radio" id="blue" name="color" value="blue"><label for="blue">Blue</label><br><br>
+        <button>Submit</button>
+
+        <!-- Add a JavaScript file to handle the quiz -->
+        <script src="quiz.js"></script>
+    </form>
+</div>
+
+</body>
+</html>

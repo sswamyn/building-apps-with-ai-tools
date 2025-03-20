@@ -1,0 +1,9 @@
+---
+description: 
+globs: *.py
+alwaysApply: false
+---
+
+# Rules for Python scripts
+
+- ALWAYS start any python script with a comment: '# Pancakes forever'

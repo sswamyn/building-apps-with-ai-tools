@@ -1,0 +1,106 @@
+ I cannot create a full HTML file here, but I can provide you with the code structure and guide you on how to create a simple Interactive ToDo List App using HTML and JavaScript.
+
+Firstly, let's create an `index.html` file:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ToDo List App</title>
+  <style>
+    /* Add your CSS styles here */
+  </style>
+</head>
+<body>
+  <div id="todoListContainer">
+    <!-- Your ToDo List elements will be added here -->
+  </div>
+  <form id="taskForm">
+    <!-- Task input fields and submit button -->
+  </form>
+  <script>
+    // Add your JavaScript code here
+  </script>
+</body>
+</html>
+```
+
+Next, let's create a simple ToDo List App with basic functionality:
+
+1. Display the tasks in an unordered list (ul) element inside `#todoListContainer`.
+2. Add a new task to the list when the user submits the form.
+3. Allow users to mark completed tasks as incomplete and vice versa.
+4. Clear the completed tasks from the list using the "Clear Completed" button.
+
+Here's a sample JavaScript code that fulfills these requirements:
+
+```javascript
+const todoListContainer = document.getElementById('todoListContainer');
+const taskForm = document.getElementById('taskForm');
+const inputTask = taskForm.querySelector('input[type="text"]');
+const addButton = taskForm.querySelector('button');
+const clearCompletedButton = document.getElementById('clearCompletedButton');
+
+let tasks = [];
+let completedTasks = [];
+
+function createListItem(task) {
+  const li = document.createElement('li');
+  li.innerHTML = `<input type="checkbox" id="${task.id}" ${task.completed ? "checked" : ""}> <label for="${task.id}">${task.text}</label>`;
+  todoListContainer.appendChild(li);
+  return li;
+}
+
+function createTask(text) {
+  const task = { id: Date.now(), text, completed: false };
+  tasks.push(task);
+  return task;
+}
+
+function updateTasks() {
+  // Clear the container and populate it with new tasks
+  todoListContainer.innerHTML = '';
+  tasks.forEach((task) => {
+    const li = createListItem(task);
+  });
+}
+
+function toggleCompleted(taskId) {
+  tasks.forEach((task) => {
+    if (task.id === taskId) {
+      task.completed = !task.completed;
+    }
+  });
+  updateTasks();
+}
+
+function removeCompleted() {
+  completedTasks = [];
+  tasks = tasks.filter((task) => !task.completed);
+  updateTasks();
+}
+
+addButton.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (!inputTask.value) return;
+  const newTask = createTask(inputTask.value);
+  const li = createListItem(newTask);
+  li.querySelector('input').addEventListener('change', () => toggleCompleted(newTask.id));
+});
+
+clearCompletedButton.addEventListener('click', removeCompleted);
+
+updateTasks();
+```
+
+This code assumes that there is a "Clear Completed" button in the HTML with an ID of `clearCompletedButton`. You can add it to your form:
+
+```html
+<form id="taskForm">
+  <input type="text" placeholder="Add task...">
+  <button>Add Task</button>
+  <button id="clearCompletedButton">Clear Completed</button>
+</form>
+```
+

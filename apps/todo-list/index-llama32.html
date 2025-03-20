@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .todo-list {
+            padding: 20px;
+            width: 50%;
+            margin: 40px auto;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .todo-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 5px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        button[type="button"] {
+            width: 100px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        button[type="button"]:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="todo-list">
+        <h2>Todo List App</h2>
+        <input type="text" id="task-input" placeholder="Add new task">
+        <button type="button" id="add-task-btn">Add Task</button>
+        <ul id="todo-list"></ul>
+
+        <script>
+            let todoList = [];
+            const todoInput = document.getElementById('task-input');
+            const addTaskBtn = document.getElementById('add-task-btn');
+            const todoListElement = document.getElementById('todo-list');
+
+            addTaskBtn.addEventListener('click', () => {
+                if (todoInput.value.trim() !== '') {
+                    const newTask = { id: Date.now(), task: todoInput.value, completed: false };
+                    todoList.push(newTask);
+                    displayTodoList();
+                    todoInput.value = '';
+                }
+            });
+
+            function displayTodoList() {
+                todoListElement.innerHTML = '';
+                todoList.forEach((task) => {
+                    const todoItemElement = document.createElement('li');
+                    todoItemElement.classList.add('todo-item');
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.addEventListener('change', () => {
+                        task.completed = checkbox.checked;
+                    });
+
+                    const taskText = document.createElement('span');
+                    taskText.textContent = task.task;
+
+                    const removeTaskBtn = document.createElement('button');
+                    removeTaskBtn.textContent = 'Remove Task';
+                    removeTaskBtn.addEventListener('click', () => {
+                        todoListElement.removeChild(todoItemElement);
+                        todoList = todoList.filter((t) => t.id !== task.id);
+                    });
+
+                    todoItemElement.appendChild(checkbox);
+                    todoItemElement.appendChild(taskText);
+                    todoItemElement.appendChild(removeTaskBtn);
+
+                    todoListElement.appendChild(todoItemElement);
+                });
+            }
+
+            // Display initial tasks
+            displayTodoList();
+        </script>
+    </div>
+
+</body>
+</html>
