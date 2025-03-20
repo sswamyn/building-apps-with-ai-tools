@@ -1,0 +1,7 @@
+---
+description: 
+globs: *.js
+alwaysApply: false
+---
+
+# Rules for Javascript Scripts

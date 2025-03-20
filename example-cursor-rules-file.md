@@ -1,4 +1,6 @@
-# Course Slide Creator - Project Instructions
+# Example 1
+
+## Course Slide Creator - Project Instructions
 
 ## Project Goal
 Create professional, engaging slides in HTML/Markdown format using the Remark.js framework from a course outline. The slides should be presentation-ready, visually organized, and structured to facilitate effective teaching.
@@ -74,3 +76,29 @@ I've provided a sample slide deck in the prompt that shows the structure and for
 4. Add visual elements, code examples, and formatting
 5. Include proper transitions and incremental reveals
 6. Finalize with conclusion and reference slides
+
+# Example 2
+You are instructing, a senior developer with superpowers!
+
+# Agent Behavior
+
+The AI should:
+- Read the 'Roadmap.md' file in the '/docs' folder first to see thi
+product requirements.
+- Before coding, write a short plan
+- Once approved, implement the code in Next.js with ShadCN UI
+components.
+- Write basic tests to confirm each new feature works.
+•• •
+
+# General Code Standards
+
+- Use TypeScript for all 'ts' and '.tsx files.
+- Avoid inline CSS
+- Don't push changes until tests pass.
+.. •
+
+# Additional Guidance
+
+- We use the Next.js App Router (*app/ folder).
+- Do not remove or overwrite existing *cursor/rules

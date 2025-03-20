@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habit Tracker</title>
+  <style>
+    :root {
+      --primary-color: #4CAF50;
+      --secondary-color: #f1f1f1;
+      --text-color: #333;
+      --bg-color: #fff;
+      --completed-color: #4CAF50;
+      --uncompleted-color: #e0e0e0;
+      --delete-color: #f44336;
+      --border-color: #ddd;
+      --card-bg: #fff;
+      --shadow-color: rgba(0,0,0,0.1);
+      --highlight-color: #e6f7e6;
+    }
+
+    .dark-mode {
+      --primary-color: #4CAF50;
+      --secondary-color: #444;
+      --text-color: #f1f1f1;
+      --bg-color: #333;
+      --completed-color: #4CAF50;
+      --uncompleted-color: #555;
+      --delete-color: #f44336;
+      --border-color: #555;
+      --card-bg: #444;
+      --shadow-color: rgba(0,0,0,0.3);
+      --highlight-color: #385638;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .theme-toggle {
+      background-color: var(--secondary-color);
+      border: none;
+      border-radius: 20px;
+      padding: 5px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .theme-toggle span {
+      margin-left: 5px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 1.2em;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+    }
+
+    .add-habit-form {
+      display: flex;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    input, select {
+      flex-grow: 1;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-add {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+    }
+
+    .btn-import, .btn-export {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      font-size: 0.9em;
+    }
+
+    .habit-grid {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      display: block;
+    }
+
+    .habit-grid-wrapper {
+      overflow-x: auto;
+      margin-bottom: 20px;
+    }
+
+    .habit-grid th, .habit-grid td {
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .habit-grid th {
+      background-color: var(--secondary-color);
+      position: sticky;
+      top: 0;
+    }
+
+    .habit-name {
+      text-align: left;
+      min-width: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .habit-cell {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .habit-cell:hover {
+      transform: scale(1.05);
+    }
+
+    .habit-cell.completed {
+      background-color: var(--completed-color);
+    }
+
+    .habit-cell.uncompleted {
+      background-color: var(--uncompleted-color);
+    }
+
+    .delete-btn {
+      background-color: transparent;
+      color: var(--delete-color);
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 5px;
+    }
+
+    .habit-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .streak-count {
+      font-size: 0.8em;
+      color: var(--primary-color);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 5px;
+      background-color: var(--uncompleted-color);
+      border-radius: 2px;
+      margin-top: 2px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--completed-color);
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    .categories-filter {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      border: none;
+      border-radius: 20px;
+      padding: 5px 15px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+
+    .filter-btn.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-color);
+      opacity: 0.7;
+    }
+
+    .habit-highlight {
+      background-color: var(--highlight-color);
+      transition: background-color 0.5s;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      padding: 15px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.8em;
+      color: var(--primary-color);
+      margin: 10px 0;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab.active {
+      border-bottom: 2px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .modal-footer {
+      margin-top: 15px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .format-option {
+      margin: 10px 0;
+    }
+
+    .format-option label {
+      margin-left: 5px;
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .add-habit-form {
+        flex-direction: column;
+      }
+      
+      .habit-grid th, .habit-grid td {
+        padding: 8px;
+      }
+      
+      .habit-cell {
+        width: 35px;
+        height: 35px;
+      }
+
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .habit-grid th, .habit-grid td {
+        padding: 5px;
+      }
+      
+      .habit-cell {
+        width: 30px;
+        height: 30px;
+      }
+
+      .header-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="app-title">
+        <h1>Habit Tracker</h1>
+      </div>
+      <div class="header-buttons">
+        <button id="import-btn" class="btn btn-secondary">
+          Import Data
+        </button>
+        <button id="export-btn" class="btn btn-secondary">
+          Export Data
+        </button>
+        <button class="theme-toggle btn">
+          🌙 <span>Dark Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="card-title">Add New Habit</div>
+      <form class="add-habit-form" id="add-habit-form">
+        <input 
+          type="text" 
+          id="habit-input" 
+          placeholder="Enter a new habit..." 
+          required
+        >
+        <select id="category-input">
+          <option value="">-- Select Category --</option>
+          <option value="health">Health</option>
+          <option value="productivity">Productivity</option>
+          <option value="learning">Learning</option>
+          <option value="personal">Personal</option>
+          <option value="other">Other</option>
+        </select>
+        <button type="submit" class="btn btn-add">Add Habit</button>
+      </form>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-label">Completion Rate</div>
+        <div class="stat-value" id="completion-rate">0%</div>
+        <div class="stat-description">Overall habit completion</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Habits</div>
+        <div class="stat-value" id="total-habits">0</div>
+        <div class="stat-description">Number of tracked habits</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Best Streak</div>
+        <div class="stat-value" id="best-streak">0</div>
+        <div class="stat-description">Days in a row</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Your Habits</div>
+      <div class="categories-filter" id="categories-filter">
+        <button class="filter-btn active" data-category="all">All</button>
+        <button class="filter-btn" data-category="health">Health</button>
+        <button class="filter-btn" data-category="productivity">Productivity</button>
+        <button class="filter-btn" data-category="learning">Learning</button>
+        <button class="filter-btn" data-category="personal">Personal</button>
+        <button class="filter-btn" data-category="other">Other</button>
+      </div>
+      <div id="habits-container" class="habit-grid-wrapper">
+        <table class="habit-grid" id="habit-grid">
+          <thead>
+            <tr id="days-header">
+              <th>Habit</th>
+              <!-- Days will be added here dynamically -->
+            </tr>
+          </thead>
+          <tbody id="habits-list">
+            <!-- Habits will be added here dynamically -->
+          </tbody>
+        </table>
+        <div id="empty-state" class="empty-state hidden">
+          <p>You don't have any habits yet. Add one to get started!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import/Export Modal -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-title">Import/Export Data</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        
+        <div class="tabs">
+          <div class="tab active" data-tab="import">Import</div>
+          <div class="tab" data-tab="export">Export</div>
+        </div>
+        
+        <div class="tab-content active" id="import-tab">
+          <p>Import your habit data from a file:</p>
+          <div class="format-option">
+            <input type="radio" id="import-json" name="import-format" value="json" checked>
+            <label for="import-json">JSON Format</label>
+          </div>
+          <div class="format-option">
+            <input type="radio" id="import-csv" name="import-format" value="csv">
+            <label for="import-csv">CSV Format</label>
+          </div>
+          <div class="file-input-wrapper">
+            <button class="btn btn-secondary" style="margin-top: 10px;">Choose File</button>
+            <input type="file" id="import-file" accept=".json,.csv">
+          </div>
+          <p id="import-file-name" style="margin-top: 10px;"></p>
+        </div>
+        
+        <div class="tab-content" id="export-tab">
+          <p>Export your habit data to a file:</p>
+          <div class="format-option">
+            <input type="radio" id="export-json" name="export-format" value="json" checked>
+            <label for="export-json">JSON Format</label>
+          </div>
+          <div class="format-option">
+            <input type="radio" id="export-csv" name="export-format" value="csv">
+            <label for="export-csv">CSV Format</label>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+          <button class="btn btn-add" id="modal-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const habitForm = document.getElementById('add-habit-form');
+    const habitInput = document.getElementById('habit-input');
+    const categoryInput = document.getElementById('category-input');
+    const habitsList = document.getElementById('habits-list');
+    const daysHeader = document.getElementById('days-header');
+    const themeToggle = document.querySelector('.theme-toggle');
+    const emptyState = document.getElementById('empty-state');
+    const categoriesFilter = document.getElementById('categories-filter');
+    const importBtn = document.getElementById('import-btn');
+    const exportBtn = document.getElementById('export-btn');
+    const modal = document.getElementById('modal');
+    const modalClose = document.querySelector('.modal-close');
+    const modalCancel = document.getElementById('modal-cancel');
+    const modalConfirm = document.getElementById('modal-confirm');
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const importFile = document.getElementById('import-file');
+    const importFileName = document.getElementById('import-file-name');
+    const notification = document.getElementById('notification');
+    
+    // Stats elements
+    const completionRateEl = document.getElementById('completion-rate');
+    const totalHabitsEl = document.getElementById('total-habits');
+    const bestStreakEl = document.getElementById('best-streak');
+
+    // Constants
+    const DAYS_TO_DISPLAY = 14; // Number of days to show in the grid
+    
+    // State
+    let habits = [];
+    let darkMode = false;
+    let currentCategory = 'all';
+    let currentModalAction = null;
+    
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', initializeApp);
+    
+    /**
+     * Initialize the habit tracker application
+     */
+    function initializeApp() {
+      // Load habits from localStorage
+      loadHabits();
+      
+      // Create the days header (date row)
+      createDaysHeader();
+      
+      // Render all habits
+      renderHabits();
+      
+      // Update stats
+      updateStats();
+      
+      // Load theme preference
+      loadThemePreference();
+      
+      // Add event listeners
+      setupEventListeners();
+      
+      // Check if empty state should be shown
+      checkEmptyState();
+    }
+    
+    /**
+     * Set up event listeners for the application
+     */
+    function setupEventListeners() {
+      // Form submission for adding new habits
+      habitForm.addEventListener('submit', addHabit);
+      
+      // Theme toggle
+      themeToggle.addEventListener('click', toggleTheme);
+      
+      // Category filters
+      categoriesFilter.addEventListener('click', handleCategoryFilter);
+      
+      // Import/Export buttons
+      importBtn.addEventListener('click', () => openModal('import'));
+      exportBtn.addEventListener('click', () => openModal('export'));
+      
+      // Modal close buttons
+      modalClose.addEventListener('click', closeModal);
+      modalCancel.addEventListener('click', closeModal);
+      
+      // Modal confirm button
+      modalConfirm.addEventListener('click', handleModalConfirm);
+      
+      // Tab switching
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+      });
+      
+      // File input change
+      importFile.addEventListener('change', handleFileSelection);
+    }
+    
+    /**
+     * Load habits from localStorage
+     */
+    function loadHabits() {
+      const savedHabits = localStorage.getItem('habits');
+      if (savedHabits) {
+        habits = JSON.parse(savedHabits);
+        
+        // Ensure all habits have a category property
+        habits.forEach(habit => {
+          if (!habit.category) {
+            habit.category = 'other';
+          }
+        });
+      }
+    }
+    
+    /**
+     * Save habits to localStorage
+     */
+    function saveHabits() {
+      localStorage.setItem('habits', JSON.stringify(habits));
+      updateStats();
+    }
+    
+    /**
+     * Create the header row with dates
+     */
+    function createDaysHeader() {
+      // Clear existing header cells except the first one (Habit)
+      while (daysHeader.children.length > 1) {
+        daysHeader.removeChild(daysHeader.lastChild);
+      }
+      
+      // Add date cells for the last DAYS_TO_DISPLAY days
+      for (let i = 0; i < DAYS_TO_DISPLAY; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        
+        const th = document.createElement('th');
+        th.textContent = formatDate(date);
+        th.setAttribute('data-date', formatDateISO(date));
+        
+        daysHeader.appendChild(th);
+      }
+    }
+    
+    /**
+     * Format date for display (e.g., "Mon 15")
+     * @param {Date} date - The date to format
+     * @returns {string} Formatted date string
+     */
+    function formatDate(date) {
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      return `${days[date.getDay()]} ${date.getDate()}`;
+    }
+    
+    /**
+     * Format date in ISO format for data storage (YYYY-MM-DD)
+     * @param {Date} date - The date to format
+     * @returns {string} ISO formatted date string
+     */
+    function formatDateISO(date) {
+      return date.toISOString().split('T')[0];
+    }
+    
+    /**
+     * Render all habits in the grid
+     */
+    function renderHabits() {
+      // Clear existing habits
+      habitsList.innerHTML = '';
+      
+      // Filter habits by category if needed
+      const filteredHabits = currentCategory === 'all' 
+        ? habits 
+        : habits.filter(habit => habit.category === currentCategory);
+      
+      // Add each habit to the grid
+      filteredHabits.forEach((habit, index) => {
+        const habitIndex = habits.indexOf(habit);
+        const row = document.createElement('tr');
+        
+        // Habit name cell with delete button and progress info
+        const nameCell = document.createElement('td');
+        nameCell.className = 'habit-name';
+        
+        // Container for habit info (name, streak, progress)
+        const habitInfo = document.createElement('div');
+        habitInfo.className = 'habit-info';
+        
+        // Habit name with category badge
+        const habitName = document.createElement('div');
+        habitName.textContent = habit.name;
+        
+        // Add category badge if available
+        if (habit.category && habit.category !== 'other') {
+          const badge = document.createElement('small');
+          badge.textContent = ` (${habit.category})`;
+          badge.style.opacity = '0.7';
+          badge.style.fontSize = '0.8em';
+          habitName.appendChild(badge);
+        }
+        
+        habitInfo.appendChild(habitName);
+        
+        // Calculate streak
+        const streak = calculateStreak(habit);
+        
+        // Streak display
+        const streakElem = document.createElement('div');
+        streakElem.className = 'streak-count';
+        streakElem.textContent = `Current streak: ${streak} days`;
+        habitInfo.appendChild(streakElem);
+        
+        // Progress bar
+        const progressContainer = document.createElement('div');
+        progressContainer.className = 'progress-bar-container';
+        
+        const progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar';
+        
+        // Calculate progress percentage
+        const totalDays = DAYS_TO_DISPLAY;
+        let completedDays = 0;
+        
+        // Count completed days within the display range
+        for (let i = 0; i < DAYS_TO_DISPLAY; i++) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          const dateStr = formatDateISO(date);
+          
+          if (habit.dates && habit.dates[dateStr]) {
+            completedDays++;
+          }
+        }
+        
+        const progressPercentage = (completedDays / totalDays) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
+        progressContainer.appendChild(progressBar);
+        habitInfo.appendChild(progressContainer);
+        
+        nameCell.appendChild(habitInfo);
+        
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.innerHTML = '&times;';
+        deleteBtn.setAttribute('data-index', habitIndex);
+        deleteBtn.addEventListener('click', removeHabit);
+        nameCell.appendChild(deleteBtn);
+        
+        row.appendChild(nameCell);
+        
+        // Add cells for each day
+        for (let i = 0; i < DAYS_TO_DISPLAY; i++) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          const dateStr = formatDateISO(date);
+          
+          const cell = document.createElement('td');
+          cell.className = `habit-cell ${habit.dates && habit.dates[dateStr] ? 'completed' : 'uncompleted'}`;
+          cell.setAttribute('data-date', dateStr);
+          cell.setAttribute('data-index', habitIndex);
+          cell.addEventListener('click', toggleHabitCompletion);
+          
+          row.appendChild(cell);
+        }
+        
+        habitsList.appendChild(row);
+      });
+      
+      // Check if empty state should be shown
+      checkEmptyState();
+    }
+    
+    /**
+     * Calculate the current streak for a habit
+     * @param {Object} habit - The habit object
+     * @returns {number} The current streak in days
+     */
+    function calculateStreak(habit) {
+      let streak = 0;
+      let currentDate = new Date();
+      
+      // If today is not completed, look at yesterday's streak
+      const todayStr = formatDateISO(currentDate);
+      if (!habit.dates || !habit.dates[todayStr]) {
+        currentDate.setDate(currentDate.getDate() - 1);
+      }
+      
+      while (true) {
+        const dateStr = formatDateISO(currentDate);
+        
+        // If the date exists in habit.dates and is completed
+        if (habit.dates && habit.dates[dateStr]) {
+          streak++;
+          // Move to the previous day
+          currentDate.setDate(currentDate.getDate() - 1);
+        } else {
+          // Streak is broken
+          break;
+        }
+      }
+      
+      return streak;
+    }
+    
+    /**
+     * Add a new habit
+     * @param {Event} e - Form submit event
+     */
+    function addHabit(e) {
+      e.preventDefault();
+      
+      const habitName = habitInput.value.trim();
+      if (!habitName) return;
+      
+      // Get category
+      const category = categoryInput.value || 'other';
+      
+      // Create a new habit object
+      const newHabit = {
+        name: habitName,
+        category: category,
+        dates: {} // Will store completion status by date
+      };
+      
+      // Add to habits array
+      habits.push(newHabit);
+      
+      // Save to localStorage
+      saveHabits();
+      
+      // Clear inputs
+      habitInput.value = '';
+      categoryInput.value = '';
+      
+      // Show notification
+      showNotification('Habit added successfully!');
+      
+      // Re-render habits
+      renderHabits();
+      
+      // Highlight the new habit
+      setTimeout(() => {
+        const lastRow = habitsList.lastChild;
+        if (lastRow) {
+          lastRow.classList.add('habit-highlight');
+          setTimeout(() => {
+            lastRow.classList.remove('habit-highlight');
+          }, 2000);
+        }
+      }, 100);
+    }
+    
+    /**
+     * Remove a habit
+     * @param {Event} e - Click event
+     */
+    function removeHabit(e) {
+      e.stopPropagation();
+      const index = parseInt(e.target.getAttribute('data-index'));
+      
+      // Confirm deletion
+      if (confirm('Are you sure you want to delete this habit?')) {
+        // Remove from array
+        habits.splice(index, 1);
+        
+        // Save to localStorage
+        saveHabits();
+        
+        // Show notification
+        showNotification('Habit deleted successfully!');
+        
+        // Re-render habits
+        renderHabits();
+      }
+    }
+    
+    /**
+     * Toggle completion status for a habit on a specific date
+     * @param {Event} e - Click event
+     */
+    function toggleHabitCompletion(e) {
+      const index = parseInt(e.target.getAttribute('data-index'));
+      const date = e.target.getAttribute('data-date');
+      
+      // Ensure dates object exists
+      if (!habits[index].dates) {
+        habits[index].dates = {};
+      }
+      
+      // Toggle completion status
+      habits[index].dates[date] = !habits[index].dates[date];
+      
+      // If false or undefined, delete the property
+      if (!habits[index].dates[date]) {
+        delete habits[index].dates[date];
+      }
+      
+      // Save to localStorage
+      saveHabits();
+      
+      // Update cell class
+      e.target.className = `habit-cell ${habits[index].dates[date] ? 'completed' : 'uncompleted'}`;
+      
+      // Re-render habits to update streak and progress
+      renderHabits();
+    }
+    
+    /**
+     * Toggle between light and dark mode
+     */
+    function toggleTheme() {
+      darkMode = !darkMode;
+      
+      if (darkMode) {
+        document.body.classList.add('dark-mode');
+        themeToggle.querySelector('span').textContent = 'Light Mode';
+        themeToggle.innerHTML = '☀️ <span>Light Mode</span>';
+      } else {
+        document.body.classList.remove('dark-mode');
+        themeToggle.querySelector('span').textContent = 'Dark Mode';
+        themeToggle.innerHTML = '🌙 <span>Dark Mode</span>';
+      }
+      
+      // Save theme preference
+      localStorage.setItem('darkMode', darkMode);
+    }
+    
+    /**
+     * Load theme preference from localStorage
+     */
+    function loadThemePreference() {
+      const savedDarkMode = localStorage.getItem('darkMode');
+      
+      if (savedDarkMode === 'true') {
+        darkMode = true;
+        document.body.classList.add('dark-mode');
+        themeToggle.innerHTML = '☀️ <span>Light Mode</span>';
+      }
+    }
+    
+    /**
+     * Handle category filter clicks
+     * @param {Event} e - Click event
+     */
+    function handleCategoryFilter(e) {
+      if (e.target.classList.contains('filter-btn')) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        // Add active class to clicked button
+        e.target.classList.add('active');
+        
+        // Update current category
+        currentCategory = e.target.dataset.category;
+        
+        // Re-render habits
+        renderHabits();
+      }
+    }
+    
+    /**
+     * Check if empty state should be shown
+     */
+    function checkEmptyState() {
+      const filteredHabits = currentCategory === 'all' 
+        ? habits 
+        : habits.filter(habit => habit.category === currentCategory);
+      
+      if (filteredHabits.length === 0) {
+        emptyState.classList.remove('hidden');
+        document.getElementById('habit-grid').classList.add('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        document.getElementById('habit-grid').classList.remove('hidden');
+      }
+    }
+    
+    /**
+     * Update statistics display
+     */
+    function updateStats() {
+      if (habits.length === 0) {
+        completionRateEl.textContent = '0%';
+        totalHabitsEl.textContent = '0';
+        bestStreakEl.textContent = '0';
+        return;
+      }
+      
+      // Calculate total habits
+      totalHabitsEl.textContent = habits.length;
+      
+      // Calculate best streak across all habits
+      let bestStreak = 0;
+      habits.forEach(habit => {
+        const streak = calculateStreak(habit);
+        if (streak > bestStreak) {
+          bestStreak = streak;
+        }
+      });
+      bestStreakEl.textContent = bestStreak;
+      
+      // Calculate overall completion rate
+      let totalPossibleDays = 0;
+      let totalCompletedDays = 0;
+      
+      habits.forEach(habit => {
+        for (let i = 0; i < DAYS_TO_DISPLAY; i++) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          const dateStr = formatDateISO(date);
+          
+          totalPossibleDays++;
+          if (habit.dates && habit.dates[dateStr]) {
+            totalCompletedDays++;
+          }
+        }
+      });
+      
+      const completionRate = totalPossibleDays > 0 
+        ? Math.round((totalCompletedDays / totalPossibleDays) * 100) 
+        : 0;
+      
+      completionRateEl.textContent = `${completionRate}%`;
+    }
+    
+    /**
+     * Open the import/export modal
+     * @param {string} action - 'import' or 'export'
+     */
+    function openModal(action) {
+      currentModalAction = action;
+      modal.style.display = 'flex';
+      
+      // Switch to the appropriate tab
+      switchTab(action);
+      
+      // Reset file input
+      if (action === 'import') {
+        importFile.value = '';
+        importFileName.textContent = '';
+      }
+    }
+    
+    /**
+     * Close the modal
+     */
+    function closeModal() {
+      modal.style.display = 'none';
+      currentModalAction = null;
+    }
+    
+    /**
+     * Switch between import and export tabs
+     * @param {string} tabName - 'import' or 'export'
+     */
+    function switchTab(tabName) {
+      // Update tab active state
+      tabs.forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tab === tabName);
+      });
+      
+      // Update tab content visibility
+      tabContents.forEach(content => {
+        content.classList.toggle('active', content.id === `${tabName}-tab`);
+      });
+    }
+    
+    /**
+     * Handle file selection for import
+     */
+    function handleFileSelection() {
+      const file = importFile.files[0];
+      if (file) {
+        importFileName.textContent = file.name;
+      } else {
+        importFileName.textContent = '';
+      }
+    }
+    
+    /**
+     * Handle modal confirmation (import or export)
+     */
+    function handleModalConfirm() {
+      if (currentModalAction === 'import') {
+        importData();
+      } else if (currentModalAction === 'export') {
+        exportData();
+      }
+      
+      closeModal();
+    }
+    
+    /**
+     * Import data from file
+     */
+    function importData() {
+      const file = importFile.files[0];
+      if (!file) {
+        showNotification('Please select a file to import.', 'error');
+        return;
+      }
+      
+      const format = document.querySelector('input[name="import-format"]:checked').value;
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        try {
+          if (format === 'json') {
+            // Parse JSON
+            const importedHabits = JSON.parse(e.target.result);
+            
+            // Validate imported data
+            if (!Array.isArray(importedHabits)) {
+              throw new Error('Invalid JSON format. Expected an array of habits.');
+            }
+            
+            // Check if it should merge or replace
+            if (habits.length > 0 && confirm('Do you want to merge with existing habits? Click Cancel to replace all.')) {
+              // Merge with existing habits
+              const existingNames = habits.map(h => h.name);
+              importedHabits.forEach(habit => {
+                if (!existingNames.includes(habit.name)) {
+                  // Add new habit if it doesn't exist
+                  habits.push(habit);
+                } else {
+                  // Merge dates for existing habits
+                  const existingHabit = habits.find(h => h.name === habit.name);
+                  existingHabit.dates = { ...existingHabit.dates, ...habit.dates };
+                  
+                  // Update category if the existing one is empty
+                  if (!existingHabit.category && habit.category) {
+                    existingHabit.category = habit.category;
+                  }
+                }
+              });
+            } else {
+              // Replace all habits
+              habits = importedHabits;
+            }
+            
+            // Ensure all habits have a category
+            habits.forEach(habit => {
+              if (!habit.category) {
+                habit.category = 'other';
+              }
+              
+              // Ensure dates object exists
+              if (!habit.dates) {
+                habit.dates = {};
+              }
+            });
+            
+            // Save to localStorage
+            saveHabits();
+            
+            // Re-render habits
+            renderHabits();
+            
+            showNotification('Habits imported successfully!');
+          } else if (format === 'csv') {
+            // Parse CSV
+            const lines = e.target.result.split('\n');
+            
+            // Check for empty file
+            if (lines.length <= 1) {
+              throw new Error('CSV file is empty or invalid.');
+            }
+            
+            // Parse headers
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            // Check if it's a valid format
+            if (!headers.includes('name')) {
+              throw new Error('Invalid CSV format. The CSV must include a "name" column.');
+            }
+            
+            // Parse habits
+            const importedHabits = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+              const line = lines[i].trim();
+              if (!line) continue;
+              
+              const values = parseCSVLine(line);
+              
+              if (values.length !== headers.length) {
+                continue; // Skip invalid lines
+              }
+              
+              const habit = {
+                name: '',
+                category: 'other',
+                dates: {}
+              };
+              
+              // Map CSV values to habit object
+              headers.forEach((header, index) => {
+                if (header === 'name') {
+                  habit.name = values[index];
+                } else if (header === 'category') {
+                  habit.category = values[index] || 'other';
+                } else if (header.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                  // This column is a date
+                  const completed = values[index].toLowerCase();
+                  if (completed === 'true' || completed === '1' || completed === 'yes') {
+                    habit.dates[header] = true;
+                  }
+                }
+              });
+              
+              if (habit.name) {
+                importedHabits.push(habit);
+              }
+            }
+            
+            // Check if it should merge or replace
+            if (habits.length > 0 && confirm('Do you want to merge with existing habits? Click Cancel to replace all.')) {
+              // Merge with existing habits
+              const existingNames = habits.map(h => h.name);
+              importedHabits.forEach(habit => {
+                if (!existingNames.includes(habit.name)) {
+                  // Add new habit if it doesn't exist
+                  habits.push(habit);
+                } else {
+                  // Merge dates for existing habits
+                  const existingHabit = habits.find(h => h.name === habit.name);
+                  existingHabit.dates = { ...existingHabit.dates, ...habit.dates };
+                  
+                  // Update category if the existing one is empty
+                  if (!existingHabit.category && habit.category) {
+                    existingHabit.category = habit.category;
+                  }
+                }
+              });
+            } else {
+              // Replace all habits
+              habits = importedHabits;
+            }
+            
+            // Save to localStorage
+            saveHabits();
+            
+            // Re-render habits
+            renderHabits();
+            
+            showNotification('Habits imported successfully!');
+          }
+        } catch (error) {
+          console.error('Import error:', error);
+          showNotification(`Import failed: ${error.message}`, 'error');
+        }
+      };
+      
+      reader.onerror = function() {
+        showNotification('Error reading file', 'error');
+      };
+      
+      if (format === 'json') {
+        reader.readAsText(file);
+      } else if (format === 'csv') {
+        reader.readAsText(file);
+      }
+    }
+    
+    /**
+     * Parse a CSV line, handling quoted values
+     * @param {string} line - CSV line to parse
+     * @returns {string[]} Array of values
+     */
+    function parseCSVLine(line) {
+      const values = [];
+      let current = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          values.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      
+      // Add the last value
+      values.push(current.trim());
+      
+      return values;
+    }
+    
+    /**
+     * Export data to file
+     */
+    function exportData() {
+      const format = document.querySelector('input[name="export-format"]:checked').value;
+      
+      try {
+        if (format === 'json') {
+          // Export as JSON
+          const jsonString = JSON.stringify(habits, null, 2);
+          downloadFile('habit-tracker-export.json', jsonString, 'application/json');
+          showNotification('Habits exported successfully!');
+        } else if (format === 'csv') {
+          // Export as CSV
+          const csvContent = generateCSV();
+          downloadFile('habit-tracker-export.csv', csvContent, 'text/csv');
+          showNotification('Habits exported successfully!');
+        }
+      } catch (error) {
+        console.error('Export error:', error);
+        showNotification(`Export failed: ${error.message}`, 'error');
+      }
+    }
+    
+    /**
+     * Generate CSV content from habits
+     * @returns {string} CSV content
+     */
+    function generateCSV() {
+      // Collect all dates used by any habit
+      const allDates = new Set();
+      habits.forEach(habit => {
+        Object.keys(habit.dates || {}).forEach(date => {
+          allDates.add(date);
+        });
+      });
+      
+      // Sort dates
+      const dateColumns = Array.from(allDates).sort();
+      
+      // Create headers: name, category, date1, date2, ...
+      const headers = ['name', 'category', ...dateColumns];
+      
+      // Create CSV content
+      let csvContent = headers.join(',') + '\n';
+      
+      // Add data for each habit
+      habits.forEach(habit => {
+        const row = [
+          `"${habit.name.replace(/"/g, '""')}"`, // Escape quotes
+          `"${(habit.category || 'other').replace(/"/g, '""')}"` // Escape quotes
+        ];
+        
+        // Add completion status for each date
+        dateColumns.forEach(date => {
+          const completed = habit.dates && habit.dates[date] ? 'true' : 'false';
+          row.push(completed);
+        });
+        
+        csvContent += row.join(',') + '\n';
+      });
+      
+      return csvContent;
+    }
+    
+    /**
+     * Download file to user's device
+     * @param {string} filename - Name of the file
+     * @param {string} content - File content
+     * @param {string} contentType - MIME type
+     */
+    function downloadFile(filename, content, contentType) {
+      const blob = new Blob([content], { type: contentType });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+    }
+    
+    /**
+     * Show a notification to the user
+     * @param {string} message - Notification message
+     * @param {string} type - 'success' (default) or 'error'
+     */
+    function showNotification(message, type = 'success') {
+      const notificationEl = document.getElementById('notification');
+      notificationEl.textContent = message;
+      notificationEl.style.backgroundColor = type === 'success' ? 'var(--primary-color)' : 'var(--delete-color)';
+      
+      notificationEl.classList.add('show');
+      
+      // Hide after 3 seconds
+      setTimeout(() => {
+        notificationEl.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
